@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  wiki:
+    image: ghcr.io/loryanstrant/wiki-ai:latest
+    container_name: wiki-ai
+    ports:
+      - "3000:3000"  # Change left port to your preference
+    environment:
+      - TZ=UTC  # Set your timezone
+      - WIKI_PORT=3000
+      - WIKI_USERNAME=admin  # Set your username
+      - WIKI_PASSWORD=changeme  # IMPORTANT: Change this!
+      - JWT_SECRET=your-secret-key-change-in-production  # IMPORTANT: Change this!
+      - NODE_ENV=production
+    volumes:
+      - ./wiki-data:/app/data  # Markdown files storage
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  default:
+    name: wiki-network
