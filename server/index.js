@@ -62,8 +62,12 @@ async function ensureDirectories() {
     const files = await fs.readdir(DATA_DIR);
     if (files.length === 0) {
       const welcomeContent = matter.stringify(
-        '# Welcome to Wiki-AI\n\nYour personal knowledge base is ready!\n\n## Getting Started\n\n- Click **Edit** to modify this page\n- Use the **+** button in the sidebar to create new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n\n## Features\n\n- 📝 Visual Markdown editing\n- 📁 Folder organization\n- 🔍 Full-text search\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n\nEnjoy your wiki!',
-        { title: 'Welcome', created: new Date().toISOString() }
+        '# Welcome to Simple Wik\n\n*"Sometimes the best knowledge base is the simplest one."*\n\nYour personal wiki is ready - as warm and welcoming as Simple Rick\'s kitchen!\n\n## Getting Started\n\n- Click **Edit** to modify this page (like tweaking a recipe)\n- Use the **+** button to bake new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n- Toggle between light and dark modes in the top bar\n- Add tags to your pages like ingredients in a recipe\n\n## Features\n\n- 📝 Visual Markdown editing (simple as Sunday morning)\n- 📁 Folder organization \n- 🌙 Dark mode for cozy evening browsing\n- 🏷️ Page tagging system for easy organization\n- 🔍 Enhanced search across content and tags\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n- ⚙️ File properties editor\n- 🗑️ Page deletion with gentle confirmations\n\nKeep it simple, keep it sweet!\n\n*Like Simple Rick always said: "The secret ingredient is simplicity."*',
+        { 
+          title: 'Welcome to Simple Wik', 
+          tags: ['welcome', 'getting-started', 'simple-rick'],
+          created: new Date().toISOString() 
+        }
       );
       await fs.writeFile(path.join(DATA_DIR, 'welcome.md'), welcomeContent);
       logger.info('Created welcome page');
@@ -272,6 +276,50 @@ app.delete('/api/pages/*', authenticateToken, async (req, res) => {
   }
 });
 
+// Rename/move page endpoint
+app.put('/api/pages/*/rename', authenticateToken, async (req, res) => {
+  const oldPath = req.params[0];
+  const { newPath } = req.body;
+  
+  try {
+    // Validate paths to prevent directory traversal
+    if (oldPath.includes('..') || newPath.includes('..')) {
+      return res.status(400).json({ error: 'Invalid page path' });
+    }
+
+    const oldFullPath = path.join(DATA_DIR, `${oldPath}.md`);
+    const newFullPath = path.join(DATA_DIR, `${newPath}.md`);
+    
+    // Check if old file exists
+    try {
+      await fs.access(oldFullPath);
+    } catch (error) {
+      return res.status(404).json({ error: 'Source page not found' });
+    }
+    
+    // Check if new path already exists
+    try {
+      await fs.access(newFullPath);
+      return res.status(409).json({ error: 'A page with that name already exists' });
+    } catch (error) {
+      // Good, file doesn't exist
+    }
+    
+    // Create directory if needed
+    const newDir = path.dirname(newFullPath);
+    await fs.mkdir(newDir, { recursive: true });
+    
+    // Move the file
+    await fs.rename(oldFullPath, newFullPath);
+    
+    res.json({ message: 'Page renamed successfully', newPath });
+    logger.info(`Page renamed: ${oldPath} -> ${newPath}`);
+  } catch (error) {
+    logger.error('Error renaming page:', error);
+    res.status(500).json({ error: 'Failed to rename page' });
+  }
+});
+
 // Search functionality
 app.get('/api/search', authenticateToken, async (req, res) => {
   const { q } = req.query;
@@ -315,12 +363,24 @@ async function getPageList(dir, basePath = '') {
       } else if (entry.name.endsWith('.md')) {
         const name = entry.name.replace('.md', '');
         const stats = await fs.stat(fullPath);
+        
+        // Read file to get metadata
+        let metadata = {};
+        try {
+          const content = await fs.readFile(fullPath, 'utf-8');
+          const { data } = matter(content);
+          metadata = data;
+        } catch (error) {
+          logger.debug(`Could not read metadata for ${fullPath}:`, error);
+        }
+        
         pages.push({
           name,
           path: relativePath.replace('.md', '').replace(/\\/g, '/'),
           type: 'page',
           lastModified: stats.mtime,
-          size: stats.size
+          size: stats.size,
+          metadata
         });
       }
     }
@@ -362,6 +422,8 @@ async function searchPages(dir, query, basePath = '') {
         if (
           entry.name.toLowerCase().includes(searchTerm) ||
           markdown.toLowerCase().includes(searchTerm) ||
+          (data.title && data.title.toLowerCase().includes(searchTerm)) ||
+          (data.tags && data.tags.some(tag => tag.toLowerCase().includes(searchTerm))) ||
           JSON.stringify(data).toLowerCase().includes(searchTerm)
         ) {
           const lines = markdown.split('\n');

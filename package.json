@@ -1,7 +1,7 @@
 {
-  "name": "wiki-ai",
+  "name": "simple-wik",
   "version": "1.0.0",
-  "description": "Self-hosted wiki solution with Markdown storage",
+  "description": "A simple wiki solution that keeps your knowledge sweet and organized - just like Simple Rick's cookies",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
