@@ -3,21 +3,18 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first
-COPY package.json ./
-COPY client/package.json ./client/
+# Copy package files first for better layer caching
+COPY package.json package-lock.json* ./
+COPY client/package.json client/package-lock.json* ./client/
 
-# Install dependencies (will generate lock files if missing)
-RUN npm install && \
-    cd client && npm install && npm run build
-#ORIGINAL CODE BELOW
-#RUN npm install --production && \
-#    cd client && npm install --production
+# Install dependencies with retry logic
+RUN npm install --omit=dev --no-optional --no-audit --no-fund && \
+    cd client && npm install --no-optional --no-audit --no-fund
 
 # Copy the rest of the source code
 COPY . .
 
-# Build client
+# Build client (only build once after copying source)
 RUN cd client && npm run build
 
 # Production stage
