@@ -3,19 +3,19 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY client/package*.json ./client/
+# Copy package files first
+COPY package.json ./
+COPY client/package.json ./client/
 
-# Install dependencies
-RUN npm ci --only=production && \
-    npm ci --prefix client --only=production
+# Install dependencies (will generate lock files if missing)
+RUN npm install --production && \
+    cd client && npm install --production
 
-# Copy source code
+# Copy the rest of the source code
 COPY . .
 
 # Build client
-RUN npm run build
+RUN cd client && npm run build
 
 # Production stage
 FROM node:18-alpine
@@ -29,11 +29,11 @@ RUN apk add --no-cache dumb-init wget
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copy built application
+# Copy built application from builder
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/client/dist ./client/dist
 COPY --from=builder --chown=nodejs:nodejs /app/server ./server
-COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
 
 # Create data directory with proper permissions
 RUN mkdir -p /app/data && \
