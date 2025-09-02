@@ -37,10 +37,15 @@ import {
   NoteAdd,
   LightMode,
   DarkMode,
+  Delete,
+  Settings,
+  MoreVert,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import PageEditor from './PageEditor';
 import PageViewer from './PageViewer';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
+import FilePropertiesDialog from './FilePropertiesDialog';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -55,9 +60,12 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFolders, setExpandedFolders] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
+  const [pageMenuAnchor, setPageMenuAnchor] = useState(null);
   const [newPageDialog, setNewPageDialog] = useState(false);
   const [newPageName, setNewPageName] = useState('');
   const [newPagePath, setNewPagePath] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [propertiesDialog, setPropertiesDialog] = useState(false);
 
   useEffect(() => {
     loadPages();
@@ -133,6 +141,44 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
     setNewPageDialog(false);
     setNewPageName('');
     setNewPagePath('');
+  };
+
+  const handleDeletePage = async () => {
+    if (!selectedPage) return;
+    
+    try {
+      await axios.delete(`/api/pages/${selectedPage.path}`);
+      toast.success('Page crumbled away successfully!', {
+        icon: '🍪',
+      });
+      loadPages();
+      setSelectedPage(null);
+      setDeleteDialog(false);
+    } catch (error) {
+      toast.error('Failed to delete page - even Simple Rick sometimes burns the cookies');
+    }
+  };
+
+  const handleRenameComplete = async ({ oldPath, newPath, displayName }) => {
+    try {
+      await axios.put(`/api/pages/${oldPath}/rename`, { newPath });
+      
+      // Update the page title if display name changed
+      if (displayName && selectedPage) {
+        const content = selectedPage.markdown || '';
+        const metadata = { ...selectedPage.metadata, title: displayName };
+        await savePage(newPath, content, metadata);
+      }
+      
+      toast.success('Page properties updated - sweet as Simple Rick\'s cookies!', {
+        icon: '📝',
+      });
+      loadPages();
+      loadPage(newPath);
+      setPropertiesDialog(false);
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to update page properties');
+    }
   };
 
   const renderPageTree = (items, level = 0) => {
@@ -237,13 +283,24 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
             {selectedPage ? selectedPage.path : 'Simple Wik'}
           </Typography>
           {selectedPage && (
-            <Button
-              color="inherit"
-              onClick={() => setEditMode(!editMode)}
-              sx={{ mr: 2 }}
-            >
-              {editMode ? 'View' : 'Edit'}
-            </Button>
+            <>
+              <Button
+                color="inherit"
+                onClick={() => setEditMode(!editMode)}
+                sx={{ mr: 1 }}
+              >
+                {editMode ? 'View' : 'Edit'}
+              </Button>
+              <Tooltip title="Page options">
+                <IconButton
+                  color="inherit"
+                  onClick={(e) => setPageMenuAnchor(e.currentTarget)}
+                  sx={{ mr: 1 }}
+                >
+                  <MoreVert />
+                </IconButton>
+              </Tooltip>
+            </>
           )}
           <Tooltip title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
             <IconButton
@@ -274,6 +331,32 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
                 <Logout fontSize="small" />
               </ListItemIcon>
               Logout
+            </MenuItem>
+          </Menu>
+          
+          <Menu
+            anchorEl={pageMenuAnchor}
+            open={Boolean(pageMenuAnchor)}
+            onClose={() => setPageMenuAnchor(null)}
+          >
+            <MenuItem onClick={() => {
+              setPropertiesDialog(true);
+              setPageMenuAnchor(null);
+            }}>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Page Properties
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={() => {
+              setDeleteDialog(true);
+              setPageMenuAnchor(null);
+            }}>
+              <ListItemIcon>
+                <Delete fontSize="small" />
+              </ListItemIcon>
+              Delete Page
             </MenuItem>
           </Menu>
         </Toolbar>
@@ -376,6 +459,20 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
           <Button onClick={handleNewPage} variant="contained">Create</Button>
         </DialogActions>
       </Dialog>
+
+      <DeleteConfirmDialog
+        open={deleteDialog}
+        page={selectedPage}
+        onConfirm={handleDeletePage}
+        onCancel={() => setDeleteDialog(false)}
+      />
+
+      <FilePropertiesDialog
+        open={propertiesDialog}
+        page={selectedPage}
+        onSave={handleRenameComplete}
+        onCancel={() => setPropertiesDialog(false)}
+      />
     </Box>
   );
 };

@@ -272,6 +272,50 @@ app.delete('/api/pages/*', authenticateToken, async (req, res) => {
   }
 });
 
+// Rename/move page endpoint
+app.put('/api/pages/*/rename', authenticateToken, async (req, res) => {
+  const oldPath = req.params[0];
+  const { newPath } = req.body;
+  
+  try {
+    // Validate paths to prevent directory traversal
+    if (oldPath.includes('..') || newPath.includes('..')) {
+      return res.status(400).json({ error: 'Invalid page path' });
+    }
+
+    const oldFullPath = path.join(DATA_DIR, `${oldPath}.md`);
+    const newFullPath = path.join(DATA_DIR, `${newPath}.md`);
+    
+    // Check if old file exists
+    try {
+      await fs.access(oldFullPath);
+    } catch (error) {
+      return res.status(404).json({ error: 'Source page not found' });
+    }
+    
+    // Check if new path already exists
+    try {
+      await fs.access(newFullPath);
+      return res.status(409).json({ error: 'A page with that name already exists' });
+    } catch (error) {
+      // Good, file doesn't exist
+    }
+    
+    // Create directory if needed
+    const newDir = path.dirname(newFullPath);
+    await fs.mkdir(newDir, { recursive: true });
+    
+    // Move the file
+    await fs.rename(oldFullPath, newFullPath);
+    
+    res.json({ message: 'Page renamed successfully', newPath });
+    logger.info(`Page renamed: ${oldPath} -> ${newPath}`);
+  } catch (error) {
+    logger.error('Error renaming page:', error);
+    res.status(500).json({ error: 'Failed to rename page' });
+  }
+});
+
 // Search functionality
 app.get('/api/search', authenticateToken, async (req, res) => {
   const { q } = req.query;
