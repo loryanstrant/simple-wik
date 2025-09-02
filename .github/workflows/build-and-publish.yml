@@ -23,6 +23,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Generate lock files if missing
+        run: |
+          if [ ! -f package-lock.json ]; then
+            echo "Generating package-lock.json..."
+            npm install --package-lock-only
+          fi
+          if [ ! -f client/package-lock.json ]; then
+            echo "Generating client/package-lock.json..."
+            cd client && npm install --package-lock-only
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
