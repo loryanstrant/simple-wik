@@ -4,6 +4,9 @@ A simple, sweet wiki solution that keeps your knowledge organized just like Simp
 
 *"Sometimes science is more art than science. A lot of people don't get that. But your wiki? That should be simple."*
 
+<p align="center"><img width="320" height="320" alt="Simple Wik (small)" src="https://github.com/user-attachments/assets/a2fd5398-41cf-4c61-95a3-18e5d5a3c0eb" /></p>
+
+
 ## Features
 
 - 📝 Visual Markdown editor with live preview (as simple as Sunday morning)
