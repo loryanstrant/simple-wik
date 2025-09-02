@@ -105,7 +105,7 @@ All wiki content is stored as `.md` files in the data directory, making it easy 
 1. Clone the repository:
 ```bash
 git clone https://github.com/loryanstrant/simple-wik.git
-cd wiki-ai
+cd simple-wik
 ```
 
 2. Install dependencies:
