@@ -470,7 +470,7 @@ async function startServer() {
     await ensureDirectories();
     
     server = app.listen(PORT, () => {
-      logger.info(`Wiki-AI server running on port ${PORT}`);
+      logger.info(`Simple Wik server running on port ${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
       logger.info(`Data directory: ${DATA_DIR}`);
     });
