@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
+  Chip,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -66,15 +67,33 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
   const [newPagePath, setNewPagePath] = useState('');
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [propertiesDialog, setPropertiesDialog] = useState(false);
+  const [allTags, setAllTags] = useState([]);
 
   useEffect(() => {
     loadPages();
   }, []);
 
+  // Extract all unique tags from pages
+  const extractAllTags = (pageList) => {
+    const tags = new Set();
+    
+    const extractFromItem = (item) => {
+      if (item.type === 'folder' && item.children) {
+        item.children.forEach(extractFromItem);
+      } else if (item.metadata?.tags) {
+        item.metadata.tags.forEach(tag => tags.add(tag));
+      }
+    };
+    
+    pageList.forEach(extractFromItem);
+    return Array.from(tags).sort();
+  };
+
   const loadPages = async () => {
     try {
       const response = await axios.get('/api/pages');
       setPages(response.data);
+      setAllTags(extractAllTags(response.data));
     } catch (error) {
       toast.error('Failed to load pages');
     }
@@ -96,7 +115,7 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
         });
         setEditMode(true);
       } else {
-        toast.error('Failed to load page');
+        toast.error('Page not found - maybe it crumbled away?');
       }
     }
   };
@@ -104,11 +123,13 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
   const savePage = async (path, content, metadata) => {
     try {
       await axios.post(`/api/pages/${path}`, { content, metadata });
-      toast.success('Page saved successfully');
+      toast.success('Page baked to perfection! 🍪', {
+        icon: '📝',
+      });
       await loadPages();
       await loadPage(path);
     } catch (error) {
-      toast.error('Failed to save page');
+      toast.error('Oops! The oven timer went off - failed to save page');
     }
   };
 
@@ -122,7 +143,7 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
       // Handle search results
       console.log('Search results:', response.data);
     } catch (error) {
-      toast.error('Search failed');
+      toast.error('Search failed - the cookies are hiding!');
     }
   };
 
@@ -217,7 +238,32 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
             <ListItemIcon>
               <FileIcon />
             </ListItemIcon>
-            <ListItemText primary={item.name} />
+            <ListItemText 
+              primary={item.name}
+              secondary={
+                item.metadata?.tags && item.metadata.tags.length > 0 ? (
+                  <Box sx={{ mt: 0.5 }}>
+                    {item.metadata.tags.slice(0, 2).map((tag, index) => (
+                      <Chip
+                        key={index}
+                        label={tag}
+                        size="small"
+                        variant="outlined"
+                        sx={{ mr: 0.5, fontSize: '0.7rem', height: '18px' }}
+                      />
+                    ))}
+                    {item.metadata.tags.length > 2 && (
+                      <Chip
+                        label={`+${item.metadata.tags.length - 2}`}
+                        size="small"
+                        variant="outlined"
+                        sx={{ fontSize: '0.7rem', height: '18px' }}
+                      />
+                    )}
+                  </Box>
+                ) : null
+              }
+            />
           </ListItem>
         );
       }
@@ -405,6 +451,7 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
               page={selectedPage}
               onSave={(content, metadata) => savePage(selectedPage.path, content, metadata)}
               onCancel={() => setEditMode(false)}
+              allTags={allTags}
             />
           ) : (
             <PageViewer page={selectedPage} />
