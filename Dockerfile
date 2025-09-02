@@ -3,21 +3,18 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files first
-COPY package.json ./
-COPY client/package.json ./client/
+# Copy package files first for better layer caching
+COPY package.json package-lock.json* ./
+COPY client/package.json client/package-lock.json* ./client/
 
-# Install dependencies (will generate lock files if missing)
-RUN npm install && \
-    cd client && npm install && npm run build
-#ORIGINAL CODE BELOW
-#RUN npm install --production && \
-#    cd client && npm install --production
+# Install dependencies
+RUN npm install --omit=dev --no-audit --no-fund
+RUN cd client && npm install --no-audit --no-fund
 
 # Copy the rest of the source code
 COPY . .
 
-# Build client
+# Build client (only build once after copying source)
 RUN cd client && npm run build
 
 # Production stage
@@ -25,8 +22,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install dumb-init and wget for health checks
-RUN apk add --no-cache dumb-init wget
+# Install dumb-init and curl for health checks
+RUN apk add --no-cache dumb-init curl
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -50,7 +47,7 @@ EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Start application with signal handling
 ENTRYPOINT ["dumb-init", "--"]
