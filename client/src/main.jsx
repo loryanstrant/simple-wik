@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import './monaco-config'; // Configure Monaco Editor before app starts
 import App from './App';
 import './index.css';
 
