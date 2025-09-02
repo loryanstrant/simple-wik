@@ -8,8 +8,11 @@ COPY package.json ./
 COPY client/package.json ./client/
 
 # Install dependencies (will generate lock files if missing)
-RUN npm install --production && \
-    cd client && npm install --production
+RUN npm install && \
+    cd client && npm install && npm run build
+#ORIGINAL CODE BELOW
+#RUN npm install --production && \
+#    cd client && npm install --production
 
 # Copy the rest of the source code
 COPY . .
