@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32">
+  <rect width="120" height="32" fill="#D2691E" rx="6"/>
+  <text x="16" y="22" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#FFF8DC" text-anchor="middle">SW</text>
+  <text x="38" y="13" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#FFF8DC">Simple</text>
+  <text x="43" y="25" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#FFF8DC">Wik</text>
+</svg>
