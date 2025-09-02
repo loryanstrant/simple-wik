@@ -13,7 +13,7 @@ A simple, sweet wiki solution that keeps your knowledge organized just like Simp
 - 🗑️ Page deletion with gentle confirmations
 - ⚙️ File properties editor for renaming and organizing
 - 🔐 Simple single-user authentication (no database required)
-- 🐳 Docker container with GHCR hosting
+- 🐳 Pre-built Docker container image hosted on GHCR
 - 💾 Markdown files stored on disk for easy RAG integration
 - ⚙️ Configurable timezone, port, and storage location
 - 🎨 Clean, warm interface inspired by simple living
@@ -30,8 +30,8 @@ version: '3.8'
 
 services:
   wiki:
-    image: ghcr.io/loryanstrant/wiki-ai:latest
-    container_name: wiki-ai
+    image: ghcr.io/loryanstrant/simple-wik:latest
+    container_name: simple-wik
     ports:
       - "3000:3000"  # Change left port to your preference
     environment:
@@ -42,7 +42,7 @@ services:
       - JWT_SECRET=your-secret-key  # IMPORTANT: Change this!
       - NODE_ENV=production
     volumes:
-      - ./wiki-data:/app/data  # Markdown files storage
+      - /your/path/to/files:/app/data  # Markdown files storage
     restart: unless-stopped
 ```
 
@@ -58,14 +58,14 @@ docker-compose up -d
 
 ```bash
 docker run -d \
-  --name wiki-ai \
+  --name simple-wik \
   -p 3000:3000 \
   -e TZ=America/New_York \
   -e WIKI_USERNAME=admin \
   -e WIKI_PASSWORD=changeme \
   -e JWT_SECRET=your-secret-key \
   -v $(pwd)/wiki-data:/app/data \
-  ghcr.io/loryanstrant/wiki-ai:latest
+  ghcr.io/loryanstrant/simple-wik:latest
 ```
 
 ## Configuration
@@ -104,7 +104,7 @@ All wiki content is stored as `.md` files in the data directory, making it easy 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/loryanstrant/wiki-ai.git
+git clone https://github.com/loryanstrant/simple-wik.git
 cd wiki-ai
 ```
 
@@ -133,7 +133,7 @@ The development server will start with:
 ### Building Docker Image Locally
 
 ```bash
-docker build -t wiki-ai .
+docker build -t simple-wik .
 ```
 
 ## Architecture
