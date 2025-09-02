@@ -274,6 +274,17 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
   const drawer = (
     <div>
       <Toolbar>
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+          <img 
+            src="/logo.svg" 
+            alt="Simple Wik Logo" 
+            style={{ 
+              height: '28px', 
+              width: 'auto',
+              marginRight: '8px'
+            }}
+          />
+        </Box>
         <Typography variant="h6" noWrap component="div">
           Pages
         </Typography>
