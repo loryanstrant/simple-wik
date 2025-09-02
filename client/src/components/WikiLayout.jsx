@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Tooltip,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -34,6 +35,8 @@ import {
   Logout,
   CreateNewFolder,
   NoteAdd,
+  LightMode,
+  DarkMode,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import PageEditor from './PageEditor';
@@ -43,7 +46,7 @@ import toast from 'react-hot-toast';
 
 const drawerWidth = 280;
 
-const WikiLayout = () => {
+const WikiLayout = ({ darkMode, toggleTheme }) => {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pages, setPages] = useState([]);
@@ -231,7 +234,7 @@ const WikiLayout = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {selectedPage ? selectedPage.path : 'Wiki-AI'}
+            {selectedPage ? selectedPage.path : 'Simple Wik'}
           </Typography>
           {selectedPage && (
             <Button
@@ -242,6 +245,15 @@ const WikiLayout = () => {
               {editMode ? 'View' : 'Edit'}
             </Button>
           )}
+          <Tooltip title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
+            <IconButton
+              color="inherit"
+              onClick={toggleTheme}
+              sx={{ mr: 1 }}
+            >
+              {darkMode ? <LightMode /> : <DarkMode />}
+            </IconButton>
+          </Tooltip>
           <IconButton
             color="inherit"
             onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -317,10 +329,13 @@ const WikiLayout = () => {
         ) : (
           <Box sx={{ textAlign: 'center', mt: 8 }}>
             <Typography variant="h4" gutterBottom>
-              Welcome to Wiki-AI
+              Welcome to Simple Wik
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Select a page from the sidebar or create a new one to get started
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Keep your knowledge simple and sweet, just like Simple Rick's life
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 4, fontStyle: 'italic' }}>
+              "Sometimes the best wiki is the simplest one"
             </Typography>
             <Button
               variant="contained"
@@ -328,7 +343,7 @@ const WikiLayout = () => {
               onClick={() => setNewPageDialog(true)}
               sx={{ mt: 4 }}
             >
-              Create New Page
+              Bake a New Page
             </Button>
           </Box>
         )}

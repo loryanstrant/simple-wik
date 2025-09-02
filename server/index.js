@@ -62,7 +62,7 @@ async function ensureDirectories() {
     const files = await fs.readdir(DATA_DIR);
     if (files.length === 0) {
       const welcomeContent = matter.stringify(
-        '# Welcome to Wiki-AI\n\nYour personal knowledge base is ready!\n\n## Getting Started\n\n- Click **Edit** to modify this page\n- Use the **+** button in the sidebar to create new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n\n## Features\n\n- 📝 Visual Markdown editing\n- 📁 Folder organization\n- 🔍 Full-text search\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n\nEnjoy your wiki!',
+        '# Welcome to Simple Wik\n\n*"Sometimes the best knowledge base is the simplest one."*\n\nYour personal wiki is ready - as warm and welcoming as Simple Rick\'s kitchen!\n\n## Getting Started\n\n- Click **Edit** to modify this page (like tweaking a recipe)\n- Use the **+** button to bake new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n- Toggle between light and dark modes in the top bar\n\n## Features\n\n- 📝 Visual Markdown editing (simple as Sunday morning)\n- 📁 Folder organization \n- 🌙 Dark mode for cozy evening browsing\n- 🏷️ Page tagging system\n- 🔍 Enhanced search across content and tags\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n- ⚙️ File properties editor\n\nKeep it simple, keep it sweet!\n\n*Like Simple Rick always said: "The secret ingredient is simplicity."*',
         { title: 'Welcome', created: new Date().toISOString() }
       );
       await fs.writeFile(path.join(DATA_DIR, 'welcome.md'), welcomeContent);

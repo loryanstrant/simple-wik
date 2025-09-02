@@ -1,17 +1,23 @@
-# Wiki-AI
+# Simple Wik
 
-A self-hosted wiki solution that runs in Docker, stores content as Markdown files on disk, and is RAG-ready for AI integration.
+A simple, sweet wiki solution that keeps your knowledge organized just like Simple Rick's life - uncomplicated and homey. Self-hosted with Markdown storage and RAG-ready for AI integration.
+
+*"Sometimes science is more art than science. A lot of people don't get that. But your wiki? That should be simple."*
 
 ## Features
 
-- 📝 Visual Markdown editor with live preview
-- 📁 Hierarchical page organization with folder structure
+- 📝 Visual Markdown editor with live preview (as simple as Sunday morning)
+- 📁 Hierarchical page organization with folder structure  
+- 🌙 Dark mode toggle for cozy evening browsing
+- 🏷️ Page tagging system for easy organization
+- 🗑️ Page deletion with gentle confirmations
+- ⚙️ File properties editor for renaming and organizing
 - 🔐 Simple single-user authentication (no database required)
 - 🐳 Docker container with GHCR hosting
 - 💾 Markdown files stored on disk for easy RAG integration
 - ⚙️ Configurable timezone, port, and storage location
-- 🎨 Clean, modern web interface
-- 🔍 Full-text search across all pages
+- 🎨 Clean, warm interface inspired by simple living
+- 🔍 Enhanced search across all pages, content, and tags
 
 ## Quick Start
 
