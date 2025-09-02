@@ -47,7 +47,7 @@ const Login = () => {
       >
         <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
           <Typography component="h1" variant="h4" align="center" gutterBottom>
-            Wiki-AI
+            Simple Wik
           </Typography>
           <Typography component="h2" variant="h6" align="center" gutterBottom>
             Sign In
