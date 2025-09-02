@@ -328,11 +328,25 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
         }}
       >
         <Toolbar>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 } }}>
+            <img 
+              src="/simple-wik-logo.png" 
+              alt="Simple Wik Logo" 
+              style={{ 
+                height: '28px', 
+                width: 'auto',
+                marginRight: '8px',
+                cursor: 'pointer'
+              }}
+              onClick={() => setSelectedPage(null)}
+              title="Go to home"
+            />
+          </Box>
           <Tooltip title="Go to home">
             <IconButton
               color="inherit"
               onClick={() => setSelectedPage(null)}
-              sx={{ mr: 1 }}
+              sx={{ mr: 1, display: { xs: 'none', sm: 'inline-flex' } }}
             >
               <Home />
             </IconButton>
