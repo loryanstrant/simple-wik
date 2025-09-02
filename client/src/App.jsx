@@ -82,6 +82,11 @@ function App() {
     localStorage.setItem('simple-wik-dark-mode', JSON.stringify(newMode));
   };
 
+  // Update body data-theme attribute for CSS variables
+  useEffect(() => {
+    document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

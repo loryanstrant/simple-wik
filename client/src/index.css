@@ -12,6 +12,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* CSS variables for theme-aware styling */
+body {
+  --code-bg: #f6f8fa;
+  --code-inline-bg: rgba(175, 184, 193, 0.2);
+  --code-text: #24292e;
+}
+
+body[data-theme="dark"] {
+  --code-bg: #2d1b13;
+  --code-inline-bg: rgba(205, 133, 63, 0.2);
+  --code-text: #f5deb3;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -36,14 +49,16 @@ code {
 }
 
 .markdown-body pre {
-  background-color: #f6f8fa;
+  background-color: var(--code-bg);
+  color: var(--code-text);
   padding: 16px;
   border-radius: 6px;
   overflow-x: auto;
 }
 
 .markdown-body code {
-  background-color: rgba(175, 184, 193, 0.2);
+  background-color: var(--code-inline-bg);
+  color: var(--code-text);
   padding: 0.2em 0.4em;
   border-radius: 3px;
   font-size: 85%;

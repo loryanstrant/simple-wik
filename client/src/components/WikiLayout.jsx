@@ -41,6 +41,7 @@ import {
   Delete,
   Settings,
   MoreVert,
+  Home,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import PageEditor from './PageEditor';
@@ -316,6 +317,15 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
         }}
       >
         <Toolbar>
+          <Tooltip title="Go to home">
+            <IconButton
+              color="inherit"
+              onClick={() => setSelectedPage(null)}
+              sx={{ mr: 1 }}
+            >
+              <Home />
+            </IconButton>
+          </Tooltip>
           <IconButton
             color="inherit"
             aria-label="open drawer"
