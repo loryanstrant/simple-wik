@@ -276,10 +276,10 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
       <Toolbar>
         <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <img 
-            src="/logo.svg" 
+            src="/simple-wik-logo.png" 
             alt="Simple Wik Logo" 
             style={{ 
-              height: '28px', 
+              height: '44px', 
               width: 'auto',
               marginRight: '8px'
             }}
@@ -328,20 +328,6 @@ const WikiLayout = ({ darkMode, toggleTheme }) => {
         }}
       >
         <Toolbar>
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, sm: 2 } }}>
-            <img 
-              src="/simple-wik-logo.png" 
-              alt="Simple Wik Logo" 
-              style={{ 
-                height: '28px', 
-                width: 'auto',
-                marginRight: '8px',
-                cursor: 'pointer'
-              }}
-              onClick={() => setSelectedPage(null)}
-              title="Go to home"
-            />
-          </Box>
           <Tooltip title="Go to home">
             <IconButton
               color="inherit"
