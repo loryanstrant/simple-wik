@@ -62,7 +62,7 @@ async function ensureDirectories() {
     const files = await fs.readdir(DATA_DIR);
     if (files.length === 0) {
       const welcomeContent = matter.stringify(
-        '# Welcome to Simple Wik\n\n*"Sometimes the best knowledge base is the simplest one."*\n\nYour personal wiki is ready - as warm and welcoming as Simple Rick\'s kitchen!\n\n## Getting Started\n\n- Click **Edit** to modify this page (like tweaking a recipe)\n- Use the **+** button to bake new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n- Toggle between light and dark modes in the top bar\n- Add tags to your pages like ingredients in a recipe\n\n## Features\n\n- 📝 Visual Markdown editing (simple as Sunday morning)\n- 📁 Folder organization \n- 🌙 Dark mode for cozy evening browsing\n- 🏷️ Page tagging system for easy organization\n- 🔍 Enhanced search across content and tags\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n- ⚙️ File properties editor\n- 🗑️ Page deletion with gentle confirmations\n\nKeep it simple, keep it sweet!\n\n*Like Simple Rick always said: "The secret ingredient is simplicity."*',
+        '# Welcome to Simple Wik\n\n*"Sometimes the best knowledge base is the simplest one."*\n\nYour personal wiki is ready - as warm and welcoming as Simple Rick\'s kitchen!\n\n## Getting Started\n\n- Click **Edit** to modify this page (like tweaking a recipe)\n- Use the **+** button to bake new pages\n- Organize pages in folders for better structure\n- All content is saved as Markdown files\n- Toggle between light and dark modes in the top bar\n- Add tags to your pages like ingredients in a recipe\n\n## Features\n\n- 📝 Visual Markdown editing (simple as Sunday morning)\n- 📁 Folder organization \n- 🌙 Dark mode for cozy evening browsing\n- 🏷️ Page tagging system for easy organization\n- 🔍 Enhanced search across content and tags\n- 💾 File-based storage (RAG-ready)\n- 🔐 Simple authentication\n- ⚙️ File properties editor\n- 🗑️ Page deletion with gentle confirmations\n\nKeep it simple, keep it sweet!\n\n*Like Simple Rick always said: ["The secret ingredient is simplicity."](https://www.youtube.com/watch?v=02_1G2ABIeI)*',
         { 
           title: 'Welcome to Simple Wik', 
           tags: ['welcome', 'getting-started', 'simple-rick'],
@@ -97,6 +97,9 @@ app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Trust proxy for accurate rate limiting when behind reverse proxies (e.g., nginx, load balancers)
+app.set('trust proxy', 1);
 
 // Rate limiting
 const limiter = rateLimit({
