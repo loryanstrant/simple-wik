@@ -39,6 +39,7 @@ const PageEditor = ({ page, onSave, onCancel }) => {
           value={content}
           onChange={setContent}
           theme="vs-light"
+          loading="Loading editor..."
           options={{
             minimap: { enabled: false },
             fontSize: 14,
