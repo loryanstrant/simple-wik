@@ -99,48 +99,6 @@ All wiki content is stored as `.md` files in the data directory, making it easy 
 - Process with AI/RAG systems
 - Migrate to other systems
 
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Local Development
-
-1. Clone the repository:
-```bash
-git clone https://github.com/loryanstrant/simple-wik.git
-cd simple-wik
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create a `.env` file for local development:
-```env
-WIKI_USERNAME=admin
-WIKI_PASSWORD=changeme
-JWT_SECRET=development-secret
-WIKI_PORT=3000
-```
-
-4. Start development server:
-```bash
-npm run dev
-```
-
-The development server will start with:
-- Backend API on http://localhost:3000
-- Frontend dev server on http://localhost:5173
-
-### Building Docker Image Locally
-
-```bash
-docker build -t simple-wik .
-```
 
 ## Architecture
 
@@ -204,6 +162,15 @@ for md_file in wiki_path.rglob("*.md"):
 2. **Set JWT secret**: Use a strong, unique JWT secret in production
 3. **Use HTTPS**: Put the wiki behind a reverse proxy with SSL in production
 4. **Regular backups**: Backup your `wiki-data` directory regularly
+
+
+## Development Approach
+
+<img width="256" height="256" alt="Vibe Coding with GitHub Copilot 256x256" src="https://github.com/user-attachments/assets/c8360318-0c18-4152-be59-3f3dcf4964a1" />
+
+
+
+
 
 ## License
 
